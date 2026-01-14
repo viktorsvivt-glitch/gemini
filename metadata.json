@@ -1,0 +1,7 @@
+{
+  "name": "Gemini Telegram-Style Bot UI",
+  "description": "Интерфейс чат-бота в стиле Telegram с интеграцией Gemini AI для текстовых и визуальных запросов.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
