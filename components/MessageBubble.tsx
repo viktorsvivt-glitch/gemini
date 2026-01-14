@@ -19,31 +19,24 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const speakText = () => {
-    const text = message.parts.map(p => p.text).join('\n');
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ru-RU';
-    window.speechSynthesis.speak(utterance);
-  };
-
   return (
-    <div className={`flex w-full mb-6 animate-msg ${isUser ? 'justify-end' : 'justify-start'}`}>
-      <div className={`max-w-[90%] md:max-w-[75%] rounded-2xl p-4 shadow-lg relative group ${
+    <div className={`flex w-full mb-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
+      <div className={`max-w-[88%] rounded-2xl px-3 py-2 shadow relative group transition-all active:scale-[0.98] ${
         isUser 
           ? 'bg-[#2b5278] text-white rounded-br-none' 
           : 'bg-[#182533] text-gray-100 rounded-bl-none border border-[#2b394a]'
       }`}>
         {message.parts.map((part, idx) => (
-          <div key={idx} className="space-y-3">
+          <div key={idx} className="space-y-2">
             {part.inlineData && (
               <img 
                 src={`data:${part.inlineData.mimeType};base64,${part.inlineData.data}`} 
                 alt="Media" 
-                className="max-w-full rounded-xl mb-3 border border-white/10"
+                className="w-full rounded-xl mb-2 object-cover"
               />
             )}
             {part.text && (
-              <div className="prose prose-invert prose-sm max-w-none break-words">
+              <div className="prose prose-invert prose-xs max-w-none break-words text-sm leading-snug">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {part.text}
                 </ReactMarkdown>
@@ -52,52 +45,24 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           </div>
         ))}
 
-        {/* Sources Section */}
         {message.sources && message.sources.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-white/10 text-xs">
-            <p className="text-gray-400 mb-2 font-medium">Источники:</p>
-            <div className="flex flex-wrap gap-2">
-              {message.sources.map((source, sIdx) => (
-                <a 
-                  key={sIdx} 
-                  href={source.uri} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition-colors text-blue-400 truncate max-w-[200px]"
-                >
-                  {source.title || 'Ссылка'}
+          <div className="mt-2 pt-2 border-t border-white/10 text-[10px]">
+            <div className="flex flex-wrap gap-1">
+              {message.sources.slice(0, 3).map((source, sIdx) => (
+                <a key={sIdx} href={source.uri} target="_blank" className="bg-white/5 px-1.5 py-0.5 rounded text-blue-400">
+                  📎 {source.title?.slice(0, 15)}...
                 </a>
               ))}
             </div>
           </div>
         )}
         
-        <div className="flex items-center justify-between mt-2 gap-4">
-          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button 
-              onClick={copyToClipboard}
-              className="p-1 hover:bg-white/10 rounded text-gray-400"
-              title="Копировать"
-            >
-              {copied ? '✅' : '📋'}
-            </button>
-            {!isUser && (
-              <button 
-                onClick={speakText}
-                className="p-1 hover:bg-white/10 rounded text-gray-400"
-                title="Озвучить"
-              >
-                🔊
-              </button>
-            )}
-          </div>
-          <div className={`text-[10px] flex items-center gap-1 ${isUser ? 'text-blue-200' : 'text-gray-500'}`}>
-            <span>{new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-            {isUser && (
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            )}
+        <div className="flex items-center justify-end mt-1 gap-2">
+          <button onClick={copyToClipboard} className="text-[10px] text-gray-500 opacity-50 group-hover:opacity-100">
+            {copied ? 'скопировано' : 'копия'}
+          </button>
+          <div className={`text-[10px] ${isUser ? 'text-blue-200' : 'text-gray-500'}`}>
+            {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
       </div>
